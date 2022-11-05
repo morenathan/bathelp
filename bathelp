@@ -1,0 +1,55 @@
+#!/bin/bash
+#
+# bathelp, a wrapper for bash builtins and random -h --help on system commands using bat
+# Copyright (C) 2022  Nathan Middleton <nathan@aplace.us>
+# See rest of notice at end of program.
+#
+
+if [[ ! "$1" ]]; then
+    cat <<EOF
+No command to find help for.
+    
+    USAGE: $(basename $0) <command>
+    
+EOF
+    exit
+fi
+
+BAT="/usr/bin/bat --plain -l help"
+
+builtins=$(help | sed '/^ /s/[[:space:]]\{2,\}/\n /' | awk '/^ /{print $1}')
+if [[ "${builtins[*]}" =~ "$1" ]]; then
+    help $@ | $BAT
+    exit $?
+fi
+
+$1 --help >/dev/null 2>/dev/null
+if [[ $? ]]; then
+    $@ --help | $BAT
+    exit $?
+fi
+
+$1 -h >/dev/null 2>/dev/null
+if [[ $? ]]; then
+    $@ -h | $BAT
+    exit $?
+fi
+
+# give up
+echo "Not a built-in, -h, or --help. Sorry."
+echo "Giving up."
+exit 1
+
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+# 
+# You should have received a copy of the GNU General Public License along
+# with this program; if not, write to the Free Software Foundation, Inc.,
+# 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
