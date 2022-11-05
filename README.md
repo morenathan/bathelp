@@ -2,8 +2,7 @@
 
 A simple wrapper around bash builtins, -h, and --help that adds the bat colorized output without addition piping at the commandline.
 
-> USAGE:
-> bathelp <command>
+> _USAGE:_ bathelp <command>
 
 All that happens are;
 - test for bash builtins.
